@@ -43,7 +43,7 @@ public class Board implements BoardInitializer {
             }
             System.out.println();
         }
-        System.out.println("  A B C D E F G H"); // Letras de las columnas
+        System.out.println("  A B C D E F G H");
     }
 
     private char getPieceSymbol(Piece piece) {
