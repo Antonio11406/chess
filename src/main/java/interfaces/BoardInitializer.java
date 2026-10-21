@@ -1,17 +1,17 @@
 package interfaces;
 
+import domain.Color;
 import domain.Piece;
 import domain.PieceType;
 import domain.Square;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public interface BoardInitializer {
     default Map<Square, Piece> initializaBoard(){
-        Color white = Color.WHITE;
-        Color black = Color.BLACK;
+        Color white = Color.white;
+        Color black = Color.black;
         Map<Square, Piece> pieces = new HashMap<>();
         pieces.put(new Square(0, 0), new Piece(PieceType.ROOK, white));
         pieces.put(new Square(0, 1), new Piece(PieceType.KNIGHT, white));
@@ -38,7 +38,7 @@ public interface BoardInitializer {
         pieces.put(new Square(7, 5), new Piece(PieceType.BISHOP, black));
         pieces.put(new Square(7, 6), new Piece(PieceType.KNIGHT, black));
         pieces.put(new Square(7, 7), new Piece(PieceType.ROOK, black));
-        return pieces
+        return pieces;
     }
 
 }
