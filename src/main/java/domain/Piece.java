@@ -1,5 +1,7 @@
 package domain;
 
-public record Piece(PieceType type, Color color) {
+import interfaces.PieceInterfaz;
+
+public record Piece(PieceType type, Color color) implements PieceInterfaz{
 
 }
