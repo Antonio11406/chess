@@ -17,14 +17,11 @@ public class Board implements BoardInitializer {
         this.pieces = Map.copyOf(pieces);
     }
 
-    public Board move(Piece piece, Square square){
-        Move movement = Move.movement(piece);
+    public Board move(Move move){
+        Piece piece = pieces.get(move.from());
         Map<Square, Piece> tablero = new HashMap<>(pieces);
-        if (pieces.containsKey(new Square(square.x() + movement.getX(), square.y()+ movement.getY()))){
-            throw new IllegalArgumentException("la casilla es ya tiene una pieza");
-        }
-        tablero.remove(square);
-        tablero.put(new Square(square.x() + movement.getX(), square.y() + movement.getY()), piece);
+        tablero.remove(move.from());
+        tablero.put(move.to(), piece);
         return new Board(tablero);
     }
     public void printBoard() {
