@@ -5,7 +5,7 @@ import interfaces.BoardInitializer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static domain.PieceType.KING;
+import static rules.MoveValidator.isValidMove;
 
 public class Board implements BoardInitializer {
     private final Map<Square, Piece> pieces;
@@ -19,6 +19,7 @@ public class Board implements BoardInitializer {
 
     public Board move(Move move){
         Piece piece = pieces.get(move.from());
+        if (!isValidMove(move, this, piece)) return new Board(pieces);
         Map<Square, Piece> tablero = new HashMap<>(pieces);
         tablero.remove(move.from());
         tablero.put(move.to(), piece);
@@ -54,5 +55,9 @@ public class Board implements BoardInitializer {
         };
 
         return piece.color() == Color.white ? symbol : Character.toLowerCase(symbol);
+    }
+
+    public Map<Square, Piece> getPieces() {
+        return pieces;
     }
 }
