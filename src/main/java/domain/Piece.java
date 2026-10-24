@@ -1,6 +1,6 @@
 package domain;
 
-import interfaces.PieceInterfaz;
+import engine.PieceInterfaz;
 
 public record Piece(PieceType type, Color color) implements PieceInterfaz{
 

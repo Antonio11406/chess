@@ -1,4 +1,4 @@
-package interfaces;
+package engine;
 
 import domain.Color;
 import domain.Piece;
