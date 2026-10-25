@@ -9,11 +9,11 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("♟️ ¡Bienvenido a tu Motor de Ajedrez en Java! ♟️");
-        System.out.println("Formato de movimiento: [fila_origen] [columna_origen] [fila_destino] [columna_destino]");
-        System.out.println("Ejemplo para mover el peón blanco de e2 a e4: 1 4 3 4");
+        System.out.println("Formato normal: [fila_origen] [columna_origen] [fila_destino] [columna_destino]");
+        System.out.println("Formato coronación: [origenX] [origenY] [destinoX] [destinoY] [Letra de pieza]");
+        System.out.println("  (Q = Reina, T = Torre, A = Alfil, C = Caballo)");
         System.out.println("Escribe 'salir' para terminar el juego.\n");
 
-        // El famoso Bucle de Juego (Game Loop)
         while (true) {
             System.out.println("\n===========================================");
             tablero.printBoard();
@@ -21,36 +21,46 @@ public class Main {
 
             String input = scanner.nextLine().trim().toLowerCase();
 
-            // Condición para salir del juego
             if (input.equals("salir") || input.equals("exit")) {
                 System.out.println("¡Gracias por jugar! Hasta la próxima.");
                 break;
             }
 
             try {
-                // Separamos el texto por los espacios
                 String[] partes = input.split("\\s+");
 
-                if (partes.length != 4) {
-                    System.out.println("❌ Formato incorrecto. Debes introducir 4 números. Ejemplo: 1 4 3 4");
-                    continue; // Vuelve al inicio del bucle
+                if (partes.length != 4 && partes.length != 5) {
+                    System.out.println("❌ Formato incorrecto. Introduce 4 números (o 5 si coronas). Ejemplo: 6 4 7 4 q");
+                    continue;
                 }
 
-                // Convertimos el texto a números
                 int fromX = Integer.parseInt(partes[0]);
                 int fromY = Integer.parseInt(partes[1]);
                 int toX = Integer.parseInt(partes[2]);
                 int toY = Integer.parseInt(partes[3]);
 
-                Move move = new Move(new Square(fromX, fromY), new Square(toX, toY));
+                Move move;
 
-                // Aplicamos el movimiento al tablero
+                // Si el usuario introduce una 5ª palabra, gestionamos la subpromoción
+                if (partes.length == 5) {
+                    String promoInput = partes[4].toUpperCase();
+                    PieceType promoType = switch (promoInput) {
+                        case "T", "ROOK" -> PieceType.ROOK;
+                        case "A", "BISHOP" -> PieceType.BISHOP;
+                        case "C", "KNIGHT" -> PieceType.KNIGHT;
+                        default -> PieceType.QUEEN; // Si ponen otra cosa o 'Q', por defecto Reina
+                    };
+                    move = new Move(new Square(fromX, fromY), new Square(toX, toY), promoType);
+                } else {
+                    move = new Move(new Square(fromX, fromY), new Square(toX, toY));
+                }
+
+                // Aplicamos el movimiento
                 tablero = tablero.move(move);
 
             } catch (NumberFormatException e) {
-                System.out.println("❌ Por favor, introduce solo números (ej: 1 4 3 4).");
+                System.out.println("❌ Por favor, introduce solo números para las coordenadas.");
             } catch (IllegalArgumentException e) {
-                // Captura tu excepción de "Le toca mover a las BLANCAS/NEGRAS"
                 System.out.println("❌ ERROR: " + e.getMessage());
             } catch (Exception e) {
                 System.out.println("❌ Ha ocurrido un error inesperado: " + e.getMessage());

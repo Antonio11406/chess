@@ -38,23 +38,44 @@ public class Board implements BoardInitializer {
 
     public Board move(Move move){
         Piece piece = pieces.get(move.from());
-        if (!piece.color().equals(currentTurn)){
-            throw new IllegalArgumentException("Movimiento ilegal: Le toca mover a las " + this.currentTurn);
-        }
+        isCorrectTunr(piece);
         if (!isValidMove(move, this, piece, enPassantTarget)) return new Board(pieces, this.currentTurn, this.whiteKingcastling, this.whiteQueencastling, this.blackKingcastling, this.blackQueencastling, enPassantTarget);
         Map<Square, Piece> tablero = new HashMap<>(pieces);
+        Color nextTurn = updateBoard(move, piece, tablero);
+        piece = isPromotion(move, piece);
+        enPassantTarget = null;
+        isEnPassant(move, piece);
+        return new Board(tablero, nextTurn, this.whiteKingcastling,this.whiteQueencastling,this.blackKingcastling,this.blackQueencastling, enPassantTarget);
+    }
+
+    private Color updateBoard(Move move, Piece piece, Map<Square, Piece> tablero) {
         if ((enPassantTarget != null) && (pieces.get(move.to()) == null) && (piece.type() == PieceType.PAWN)){
             tablero.remove(new Square(move.from().x(), move.to().y()));
         }
-        enPassantTarget = null;
         tablero.remove(move.from());
         tablero.put(move.to(), piece);
-        Color nextTurn = (this.currentTurn.equals(Color.white)) ? Color.black : Color.white;
-        if (piece.type().equals(PieceType.PAWN) && abs(move.to().x()-move.from().x()) == 2){
-            enPassantTarget = new Square(move.to().x()-move.from().x()/2, move.to().y());
-        }
-        return new Board(tablero, nextTurn, this.whiteKingcastling,this.whiteQueencastling,this.blackKingcastling,this.blackQueencastling, enPassantTarget);
+        return (this.currentTurn.equals(Color.white)) ? Color.black : Color.white;
     }
+
+    private void isCorrectTunr(Piece piece) {
+        if (!piece.color().equals(currentTurn)){
+            throw new IllegalArgumentException("Movimiento ilegal: Le toca mover a las " + this.currentTurn);
+        }
+    }
+
+    private void isEnPassant(Move move, Piece piece) {
+        if (piece.type().equals(PieceType.PAWN) && abs(move.to().x()- move.from().x()) == 2){
+            enPassantTarget = new Square(move.to().x()- move.from().x()/2, move.to().y());
+        }
+    }
+
+    private static Piece isPromotion(Move move, Piece piece) {
+        if (piece.type().equals(PieceType.PAWN) && ((piece.color().equals(Color.white) && move.to().x()==7) || (piece.color().equals(Color.black) && move.to().x()==0))){
+            piece = new Piece(move.promotion(), piece.color());
+        }
+        return piece;
+    }
+
     public void printBoard() {
         for (int row = 7; row >= 0; row--) {
             System.out.print(row + " ");
