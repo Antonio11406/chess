@@ -26,22 +26,21 @@ public class MoveValidator {
     }
 
     private static boolean validateBishop(Move move, Board board, Piece piece) {
-        if (isPathBlocked(move, board, piece)) return false;
         int diffX = abs(move.from().x() - move.to().x());
         int diffY = abs(move.from().y() - move.to().y());
-        return (diffX == diffY && (diffX >0));
+        if (!(diffX == diffY && (diffX >0))) return false;
+        return !isPathBlocked(move, board, piece);
     }
 
     private static boolean validateQueen(Move move, Board board, Piece piece) {
-        if (isPathBlocked(move, board, piece)) return false;
-        return validateBishop(move, board, piece) ^ validateRook(move, board, piece);
+        return validateBishop(move, board, piece) || validateRook(move, board, piece);
     }
 
     private static boolean validateRook(Move move, Board board, Piece piece) {
-        if (isPathBlocked(move, board, piece)) return false;
         int diffY = abs(move.from().y() - move.to().y());
         int diffX = abs(move.from().x() - move.to().x());
-        return ((diffX >0 && diffY == 0) || (diffX ==0 && diffY > 0));
+        if (!((diffX >0 && diffY == 0) || (diffX ==0 && diffY > 0))) return false;
+        return !isPathBlocked(move, board, piece);
     }
 
     private static boolean validateKnight(Move move,Board board, Piece piece) {
@@ -67,9 +66,16 @@ public class MoveValidator {
     }
 
     private static boolean capturePawn(Move move, Piece piece, Map<Square, Piece> tablero) {
-        if (move.to().y()- move.from().y() != 0 && piece.color() != tablero.get(move.to()).color()){
-            if ((tablero.get(move.to().y()+1) != null) || (tablero.get(move.to().y()-1) != null)){
-                return true;
+        int diffX = move.to().x() - move.from().x();
+        int diffY = abs(move.to().y() - move.from().y());
+        if (diffY == 1) {
+            if (piece.color().equals(Color.white) && diffX == 1) {
+                Piece targetPiece = tablero.get(move.to());
+                return targetPiece != null && !targetPiece.color().equals(piece.color());
+            }
+            if (piece.color().equals(Color.black) && diffX == -1) {
+                Piece targetPiece = tablero.get(move.to());
+                return targetPiece != null && !targetPiece.color().equals(piece.color());
             }
         }
         return false;
@@ -88,6 +94,11 @@ public class MoveValidator {
 
     private static boolean isPathBlocked(Move move, Board board, Piece piece){
         Map<Square, Piece>tablero = board.getPieces();
+        int diffX = abs(move.to().x() - move.from().x());
+        int diffY = abs(move.to().y() - move.from().y());
+        if (diffX != 0 && diffY != 0 && diffX != diffY) {
+            return false;
+        }
         int stepX = Integer.compare(move.to().x(), move.from().x());
         int stepY = Integer.compare(move.to().y(), move.from().y());
 
@@ -104,7 +115,7 @@ public class MoveValidator {
         }
         Piece piece1 = tablero.get(move.to());
         if (piece1 != null) {
-            if (move.to().y() - move.from().y() == 0 && piece.type().equals(PieceType.PAWN)) return false;
+            if (diffY == 0 && piece.type().equals(PieceType.PAWN)) return true;
             if (piece1.color().equals(piece.color())) return true;
         }
         return false;

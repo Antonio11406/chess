@@ -48,7 +48,7 @@ public class Main {
                         case "T", "ROOK" -> PieceType.ROOK;
                         case "A", "BISHOP" -> PieceType.BISHOP;
                         case "C", "KNIGHT" -> PieceType.KNIGHT;
-                        default -> PieceType.QUEEN; // Si ponen otra cosa o 'Q', por defecto Reina
+                        default -> PieceType.QUEEN;
                     };
                     move = new Move(new Square(fromX, fromY), new Square(toX, toY), promoType);
                 } else {

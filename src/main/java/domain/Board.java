@@ -42,6 +42,9 @@ public class Board implements BoardInitializer {
         if (!isValidMove(move, this, piece, enPassantTarget)) return new Board(pieces, this.currentTurn, this.whiteKingcastling, this.whiteQueencastling, this.blackKingcastling, this.blackQueencastling, enPassantTarget);
         Map<Square, Piece> tablero = new HashMap<>(pieces);
         Color nextTurn = updateBoard(move, piece, tablero);
+        if (isKingInCheck(currentTurn, tablero)){
+            if (!piece.type().equals(PieceType.KING)) throw new IllegalArgumentException("rey en jaque");
+        }
         piece = isPromotion(move, piece);
         enPassantTarget = null;
         isEnPassant(move, piece);
@@ -64,16 +67,45 @@ public class Board implements BoardInitializer {
     }
 
     private void isEnPassant(Move move, Piece piece) {
-        if (piece.type().equals(PieceType.PAWN) && abs(move.to().x()- move.from().x()) == 2){
-            enPassantTarget = new Square(move.to().x()- move.from().x()/2, move.to().y());
+        if (piece.type().equals(PieceType.PAWN) && abs(move.to().x() - move.from().x()) == 2){
+            enPassantTarget = new Square((move.to().x() + move.from().x()) /2, move.to().y());
         }
     }
 
-    private static Piece isPromotion(Move move, Piece piece) {
+    private Piece isPromotion(Move move, Piece piece) {
         if (piece.type().equals(PieceType.PAWN) && ((piece.color().equals(Color.white) && move.to().x()==7) || (piece.color().equals(Color.black) && move.to().x()==0))){
             piece = new Piece(move.promotion(), piece.color());
         }
         return piece;
+    }
+
+    private boolean isKingInCheck(Color kingColor, Map<Square, Piece> tablero){
+        Square kingSquare = null;
+        kingSquare = findKing(kingColor, tablero, kingSquare);
+        if (kingSquare == null) {
+            return false;
+        }
+        Color enemyColor = kingColor.equals(Color.white) ? Color.black : Color.white;
+        for (Map.Entry<Square, Piece> entry : tablero.entrySet()){
+            Piece piece = entry.getValue();
+            Square square = entry.getKey();
+            if (piece.color().equals(kingColor)) continue;
+            Board board = new Board(tablero, enemyColor, whiteKingcastling, whiteQueencastling, blackKingcastling, blackQueencastling, enPassantTarget);
+            if (isValidMove(new Move(square, kingSquare), board, piece, enPassantTarget)) return true;
+        }
+        return false;
+    }
+
+    private static Square findKing(Color kingColor, Map<Square, Piece> tablero, Square kingSquare) {
+        for (Map.Entry<Square, Piece> entry : tablero.entrySet()){
+            Piece piece = entry.getValue();
+            Square square = entry.getKey();
+            if (piece.color().equals(kingColor) && piece.type().equals(PieceType.KING)){
+                kingSquare = square;
+                break;
+            }
+        }
+        return kingSquare;
     }
 
     public void printBoard() {
