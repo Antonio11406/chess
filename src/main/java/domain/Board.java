@@ -39,6 +39,7 @@ public class Board implements BoardInitializer {
     public Board move(Move move){
         Piece piece = pieces.get(move.from());
         isCorrectTunr(piece);
+        if (isCheckmate(currentTurn)) throw new IllegalStateException("¡Jaque Mate! Las " + currentTurn + " no tienen movimientos válidos. La partida ha terminado.");
         if (!isValidMove(move, this, piece, enPassantTarget)) return new Board(pieces, this.currentTurn, this.whiteKingcastling, this.whiteQueencastling, this.blackKingcastling, this.blackQueencastling, enPassantTarget);
         Map<Square, Piece> tablero = new HashMap<>(pieces);
         Color nextTurn = updateBoard(move, piece, tablero);
