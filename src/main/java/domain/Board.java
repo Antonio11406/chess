@@ -108,6 +108,37 @@ public class Board implements BoardInitializer {
         return kingSquare;
     }
 
+    public boolean isCheckmate(Color kingColor) {
+        if (!isKingInCheck(kingColor, this.pieces)) {
+            return false;
+        }
+        for (Map.Entry<Square, Piece> entry : this.pieces.entrySet()) {
+            Square fromSquare = entry.getKey();
+            Piece piece = entry.getValue();
+            if (!piece.color().equals(kingColor)) continue;
+            for (int x = 0; x < 8; x++) {
+                for (int y = 0; y < 8; y++) {
+                    Square toSquare = new Square(x, y);
+                    Move hypotheticalMove = new Move(fromSquare, toSquare);
+                    if (engine.MoveValidator.isValidMove(hypotheticalMove, this, piece, this.enPassantTarget)) {
+                        Map<Square, Piece> tempTablero = new HashMap<>(this.pieces);
+                        if (this.enPassantTarget != null && this.pieces.get(toSquare) == null && piece.type() == PieceType.PAWN) {
+                            tempTablero.remove(new Square(fromSquare.x(), toSquare.y()));
+                        }
+                        tempTablero.remove(fromSquare);
+                        tempTablero.put(toSquare, piece);
+
+                        if (!isKingInCheck(kingColor, tempTablero)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     public void printBoard() {
         for (int row = 7; row >= 0; row--) {
             System.out.print(row + " ");
