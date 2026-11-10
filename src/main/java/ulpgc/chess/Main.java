@@ -1,6 +1,10 @@
-package ui;
+package ulpgc.chess;
 
-import domain.*;
+import ulpgc.chess.domain.Board;
+import ulpgc.chess.domain.Move;
+import ulpgc.chess.domain.PieceType;
+import ulpgc.chess.domain.Square;
+
 import java.util.Scanner;
 
 public class Main {

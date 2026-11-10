@@ -1,6 +1,6 @@
-package domain;
+package ulpgc.chess.domain;
 
-import engine.PieceInterfaz;
+import ulpgc.chess.logic.PieceInterfaz;
 
 public record Piece(PieceType type, Color color) implements PieceInterfaz{
 

@@ -1,9 +1,9 @@
-package engine;
+package ulpgc.chess.logic;
 
-import domain.Color;
-import domain.Piece;
-import domain.PieceType;
-import domain.Square;
+import ulpgc.chess.domain.Color;
+import ulpgc.chess.domain.Piece;
+import ulpgc.chess.domain.PieceType;
+import ulpgc.chess.domain.Square;
 
 import java.util.HashMap;
 import java.util.Map;

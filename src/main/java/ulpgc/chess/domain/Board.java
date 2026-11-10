@@ -1,12 +1,13 @@
-package domain;
+package ulpgc.chess.domain;
 
-import engine.BoardInitializer;
+import ulpgc.chess.logic.BoardInitializer;
+import ulpgc.chess.logic.MoveValidator;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.Math.abs;
-import static engine.MoveValidator.isValidMove;
+import static ulpgc.chess.logic.MoveValidator.isValidMove;
 
 public class Board implements BoardInitializer {
     private final Map<Square, Piece> pieces;
@@ -121,7 +122,7 @@ public class Board implements BoardInitializer {
                 for (int y = 0; y < 8; y++) {
                     Square toSquare = new Square(x, y);
                     Move hypotheticalMove = new Move(fromSquare, toSquare);
-                    if (engine.MoveValidator.isValidMove(hypotheticalMove, this, piece, this.enPassantTarget)) {
+                    if (MoveValidator.isValidMove(hypotheticalMove, this, piece, this.enPassantTarget)) {
                         Map<Square, Piece> tempTablero = new HashMap<>(this.pieces);
                         if (this.enPassantTarget != null && this.pieces.get(toSquare) == null && piece.type() == PieceType.PAWN) {
                             tempTablero.remove(new Square(fromSquare.x(), toSquare.y()));

@@ -1,4 +1,4 @@
-package domain;
+package ulpgc.chess.domain;
 
 public record Square(int x, int y) {
     public Square {

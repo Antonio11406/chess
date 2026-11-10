@@ -1,6 +1,6 @@
-package engine;
+package ulpgc.chess.logic;
 
-import domain.*;
+import ulpgc.chess.domain.*;
 
 import java.util.Map;
 

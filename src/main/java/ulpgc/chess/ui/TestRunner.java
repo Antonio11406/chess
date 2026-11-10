@@ -1,6 +1,7 @@
-package ui;
+package ulpgc.chess.ui;
 
-import domain.*;
+import ulpgc.chess.domain.*;
+
 public class TestRunner {
     public static void main(String[] args) {
         System.out.println("🧪 ----------------------------------------");
