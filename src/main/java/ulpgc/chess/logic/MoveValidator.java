@@ -57,9 +57,11 @@ public class MoveValidator {
     private static boolean validatePawn(Move move, Board board, Piece piece, Square enPassantTarget) {
         Map<Square, Piece> tablero = board.getPieces();
         int diffX = move.to().x() - move.from().x();
+        int diffY = abs(move.to().y() - move.from().y());
         if (isPathBlocked(move, board, piece)) return false;
         if (enPassant(move, piece, enPassantTarget, diffX)) return true;
         if (capturePawn(move, piece, tablero)) return true;
+        if (diffY != 0) return false;
         if (piece.color().equals(Color.white) && move.from().x() == 1) return (diffX == 2 || diffX == 1);
         if (piece.color().equals(Color.black) && move.from().x() == 6) return (diffX == -2 || diffX == -1);
         return ((piece.color().equals(Color.white) && diffX == 1) || (piece.color().equals(Color.black) && diffX == -1));

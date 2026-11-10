@@ -37,11 +37,12 @@ public class Board implements BoardInitializer {
         this.enPassantTarget = enPassantTarget;
     }
 
-    public Board move(Move move){
+    public Board move(Move move) throws Exception {
         Piece piece = pieces.get(move.from());
         isCorrectTunr(piece);
-        if (isCheckmate(currentTurn)) throw new IllegalStateException("¡Jaque Mate! Las " + currentTurn + " no tienen movimientos válidos. La partida ha terminado.");
-        if (!isValidMove(move, this, piece, enPassantTarget)) return new Board(pieces, this.currentTurn, this.whiteKingcastling, this.whiteQueencastling, this.blackKingcastling, this.blackQueencastling, enPassantTarget);
+        if (!isValidMove(move, this, piece, enPassantTarget)) {
+            throw new IllegalArgumentException("Movimiento ilegal: esa pieza no se puede mover de esa forma o el camino está bloqueado.");
+        }
         Map<Square, Piece> tablero = new HashMap<>(pieces);
         Color nextTurn = updateBoard(move, piece, tablero);
         if (isKingInCheck(currentTurn, tablero)){
@@ -50,7 +51,11 @@ public class Board implements BoardInitializer {
         piece = isPromotion(move, piece);
         enPassantTarget = null;
         isEnPassant(move, piece);
-        return new Board(tablero, nextTurn, this.whiteKingcastling,this.whiteQueencastling,this.blackKingcastling,this.blackQueencastling, enPassantTarget);
+        Board nuevo = new Board(tablero, nextTurn, this.whiteKingcastling,this.whiteQueencastling,this.blackKingcastling,this.blackQueencastling, enPassantTarget);
+        if (nuevo.isCheckmate(Color.white) || nuevo.isCheckmate(Color.black)){
+            throw new CheckmateException("¡Jaque Mate! Ganan las " + currentTurn, nuevo);
+        }
+        return nuevo;
     }
 
     private Color updateBoard(Move move, Piece piece, Map<Square, Piece> tablero) {

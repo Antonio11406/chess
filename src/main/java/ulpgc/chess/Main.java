@@ -1,9 +1,6 @@
 package ulpgc.chess;
 
-import ulpgc.chess.domain.Board;
-import ulpgc.chess.domain.Move;
-import ulpgc.chess.domain.PieceType;
-import ulpgc.chess.domain.Square;
+import ulpgc.chess.domain.*;
 
 import java.util.Scanner;
 
@@ -19,6 +16,7 @@ public class Main {
         System.out.println("Escribe 'salir' para terminar el juego.\n");
 
         while (true) {
+
             System.out.println("\n===========================================");
             tablero.printBoard();
             System.out.print("\nIntroduce tu movimiento (o 'salir'): ");
@@ -44,8 +42,6 @@ public class Main {
                 int toY = Integer.parseInt(partes[3]);
 
                 Move move;
-
-                // Si el usuario introduce una 5ª palabra, gestionamos la subpromoción
                 if (partes.length == 5) {
                     String promoInput = partes[4].toUpperCase();
                     PieceType promoType = switch (promoInput) {
@@ -58,14 +54,16 @@ public class Main {
                 } else {
                     move = new Move(new Square(fromX, fromY), new Square(toX, toY));
                 }
-
-                // Aplicamos el movimiento
                 tablero = tablero.move(move);
 
             } catch (NumberFormatException e) {
                 System.out.println("❌ Por favor, introduce solo números para las coordenadas.");
             } catch (IllegalArgumentException e) {
                 System.out.println("❌ ERROR: " + e.getMessage());
+            } catch (CheckmateException e) {
+                e.getFinalBoard().printBoard();
+                System.out.println("\n🏆 " + e.getMessage());
+                break;
             } catch (Exception e) {
                 System.out.println("❌ Ha ocurrido un error inesperado: " + e.getMessage());
             }
